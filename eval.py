@@ -33,8 +33,6 @@ model.eval()
 def test():
 
     results = {'accuracy': [], 'precision': [], 'recall': [], 'f1': [], 'specificity': []}
-    labels_npy = []
-    predictions_npy = []
     for idx in range(len(test_dataset)):
 
         # Load data
@@ -45,20 +43,10 @@ def test():
         # Predict on batch of images
         predictions = model(images)
 
-        #
-        labels_npy.append(labels.cpu().detach().numpy().squeeze())
-        predictions_npy.append(predictions.cpu().detach().numpy().squeeze())
-
         # Track batch results
         m = utils.metrics(predictions, labels)
         for key in m.keys():
             results[key].append(m[key])
-
-    # Plot the confusion matrix
-    labels_npy = np.array(labels_npy).reshape(-1)
-    predictions_npy = (np.array(predictions_npy) > 0.5).astype(np.float32).reshape(-1)
-    np.save('labels_test.npy', labels_npy)
-    np.save('predictions_test.npy', predictions_npy)
 
     # Get the average over all batches
     for key in results.keys():
